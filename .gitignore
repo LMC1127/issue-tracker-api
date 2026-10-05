@@ -1,0 +1,8 @@
+Project3_Overview.md
+Project3_workflow.md
+.DS_Store
+.venv/
+.env
+.env.test
+__pycache__/
+*.pyc
