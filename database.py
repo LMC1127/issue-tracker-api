@@ -36,6 +36,29 @@ def create_user(username: str, email: str, password_hash: str):
 
             return cursor.fetchone()
 
+def get_user_by_username(username: str):
+    with psycopg.connect(
+        DATABASE_URL,
+        row_factory=dict_row,
+    ) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    username,
+                    email,
+                    password_hash,
+                    role,
+                    created_at
+                FROM users
+                WHERE username = %s;
+                """,
+                (username,),
+            )
+
+            return cursor.fetchone()
+
 
 if __name__ == "__main__":
     test_connection()

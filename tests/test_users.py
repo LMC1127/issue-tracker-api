@@ -204,3 +204,62 @@ def test_register_multiple_invalid_fields():
     assert "username" in fields
     assert "email" in fields
     assert "password" in fields
+
+def test_login_success():
+    client.post(
+        "/users/register",
+        json={
+            "username": "loginuser",
+            "email": "loginuser@example.com",
+            "password": "password123",
+        },
+    )
+
+    response = client.post(
+        "/login",
+        json={
+            "username": "loginuser",
+            "password": "password123",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["username"] == "loginuser"
+    assert data["email"] == "loginuser@example.com"
+    assert data["role"] == "user"
+
+def test_login_user_not_found():
+    response = client.post(
+        "/login",
+        json={
+            "username": "notexist",
+            "password": "password123",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid username or password"
+
+def test_login_wrong_password():
+    client.post(
+        "/users/register",
+        json={
+            "username": "loginuser",
+            "email": "loginuser@example.com",
+            "password": "password123",
+        },
+    )
+
+    response = client.post(
+        "/login",
+        json={
+            "username": "loginuser",
+            "password": "wrongpassword",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid username or password"
